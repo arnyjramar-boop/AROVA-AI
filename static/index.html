@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AROVA AI</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #080d18;
+  color: white;
+}
+
+header {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid #26344b;
+}
+
+header h1 {
+  color: #66d9ff;
+  margin: 0;
+  font-size: 30px;
+}
+
+header p {
+  color: #a9b8cc;
+}
+
+main {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+}
+
+#welcome {
+  text-align: center;
+  margin: 50px 0 30px;
+}
+
+#welcome h2 {
+  font-size: 28px;
+}
+
+#welcome p {
+  color: #a9b8cc;
+}
+
+#chat {
+  height: 50vh;
+  overflow-y: auto;
+  background: #111b2b;
+  padding: 15px;
+  border-radius: 15px;
+}
+
+.message {
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 12px;
+  background: #203149;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.user {
+  background: #164c70;
+}
+
+form {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid #34445c;
+  border-radius: 12px;
+  background: #111b2b;
+  color: white;
+}
+
+button {
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: #66d9ff;
+  color: #07111d;
+  font-weight: bold;
+}
+
+footer {
+  text-align: center;
+  color: #718096;
+  padding: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>AROVA AI</h1>
+  <p>Your Advanced AI Assistant</p>
+</header>
+
+<main>
+  <section id="welcome">
+    <h2>Think beyond.</h2>
+    <p>Ask AROVA anything.</p>
+  </section>
+
+  <div id="chat">
+    <div class="message">
+      AROVA: Hello! I'm AROVA. How can I help you today?
+    </div>
+  </div>
+
+  <form id="chatForm">
+    <input id="message"
+      placeholder="Message AROVA..."
+      autocomplete="off"
+      required>
+    <button type="submit">Send</button>
+  </form>
+</main>
+
+<footer>
+  AROVA AI © 2026
+</footer>
+
+<script>
+const form = document.getElementById("chatForm");
+const input = document.getElementById("message");
+const chat = document.getElementById("chat");
+
+form.addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  const message = input.value.trim();
+  if (!message) return;
+
+  const userMessage = document.createElement("div");
+  userMessage.className = "message user";
+  userMessage.textContent = "You: " + message;
+  chat.appendChild(userMessage);
+
+  input.value = "";
+
+  const reply = document.createElement("div");
+  reply.className = "message";
+  reply.textContent = "AROVA is thinking...";
+  chat.appendChild(reply);
+
+  chat.scrollTop = chat.scrollHeight;
+
+  try {
+    const response = await fetch("/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({message})
+    });
+
+    if (!response.ok) throw new Error("Connection failed");
+
+    const data = await response.json();
+    reply.textContent = "AROVA: " + data.reply;
+
+  } catch (error) {
+    reply.textContent =
+      "AROVA: Unable to connect. Please try again.";
+  }
+
+  chat.scrollTop = chat.scrollHeight;
+});
+</script>
+
+</body>
+</html>
